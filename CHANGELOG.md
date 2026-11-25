@@ -2,6 +2,16 @@
 
 重要变更记录于此。版本号遵循 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] — 2026-11-25
+
+### Fixed
+
+- `tools/check-subagent-model.cjs` 打印的预设名取自 session **文件头**，那是创建时的静态值；
+  在 standard 时期创建、之后切到 advisor 的会话上会显示错误的 preset。
+  改为优先读会话投影（`agentPreset.val`），并与文件头不一致时并列打印
+  （`advisor (created as standard)`）。
+- 文档：`docs/pitfalls*.md` 第 3 条补充"文件头是静态值，工具作者也会踩"。
+
 ## [0.1.0] — 2026-11-25
 
 首个发布版本。

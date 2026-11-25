@@ -1,6 +1,6 @@
 {
   "name": "dsh-advisor-preset",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH agent preset that routes sub-agents to a different provider (e.g. your ChatGPT subscription) while the main model orchestrates.",
   "type": "module",
   "license": "MIT",

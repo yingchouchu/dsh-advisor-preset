@@ -53,6 +53,18 @@ The only reliable answer for "what is this session actually running":
 `val: standard` means the session is still standard mode regardless of the menu.
 Also note: in the same projection, `"preset": "danger-full-access"` is the **permission tier**, not the agent preset.
 
+**This trap is not only for people reading the UI — it also bites tool authors.**
+The `agentPreset` field in a session **header** is frozen at creation time: a session created
+under `standard` and switched to `advisor` later will still say `standard` there.
+For the current value, read the projection:
+
+```
+storages/session_projcache/sessions/<sessionId>.json  ->  "agentPreset": { "val": "advisor" }
+```
+
+`tools/check-subagent-model.cjs` in this repository does exactly that, and prints both values
+when they differ.
+
 ---
 
 ## 4. Sub-agents inherit the persona — and conclude they are the planner

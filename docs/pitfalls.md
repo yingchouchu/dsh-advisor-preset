@@ -51,6 +51,16 @@ GUI 里预设列表，**高亮的是悬停/焦点，打勾的才是当前**。
 
 另外注意：同一份投影里 `"preset": "danger-full-access"` 是**权限档位**，不是 agent 预设，别混。
 
+**这条不只坑读界面的人，也坑写工具的人。** session 文件**头**里的 `agentPreset` 是**创建时**的静态值：
+一个 standard 时期创建、后来切到 advisor 的会话，文件头永远写着 standard。
+要"当前值"必须读投影：
+
+```
+storages/session_projcache/sessions/<会话id>.json  →  "agentPreset": { "val": "advisor" }
+```
+
+本仓库的 `tools/check-subagent-model.cjs` 就是踩过这个坑之后改成优先读投影、两者不一致时并列打印的。
+
 ---
 
 ## 4. 子 agent 会继承父会话的 persona，于是它以为自己是"规划者"

@@ -7,6 +7,10 @@
  *
  * 为什么不用配置判断：配置存在 ≠ 配置被读取。下拉菜单里勾选 ≠ 实际生效。
  * session 日志里的 message.source 是运行时真值，改不了。
+ *
+ * 关于预设：session 文件头里的 agentPreset 是**创建时**的静态值，中途切换过的会话
+ * 会和现状不符。当前值要去 storages/session_projcache/sessions/<id>.json 里读
+ * agentPreset.val。两者不一致时会同时打印出来，避免误读。
  */
 const z = require('node:zlib')
 const fs = require('node:fs')
@@ -15,6 +19,7 @@ const os = require('node:os')
 
 const DSH_HOME = process.env.DSH_HOME || path.join(os.homedir(), '.dsh')
 const ROOT = path.join(DSH_HOME, 'sessions')
+const PROJ = path.join(DSH_HOME, 'storages', 'session_projcache', 'sessions')
 
 /** session 文件是多帧 zstd 拼接，逐帧解压后拼起来。 */
 function decompress(file) {
@@ -37,6 +42,16 @@ function decompress(file) {
     } catch {}
   }
   return parts.join('')
+}
+
+/** 当前生效的 agent 预设：优先读投影，回退到文件头（创建时的值）。 */
+function currentPreset(id, headerPreset) {
+  try {
+    const raw = fs.readFileSync(path.join(PROJ, `${id}.json`), 'utf8')
+    const m = raw.match(/"agentPreset"\s*:\s*\{[^}]*"val"\s*:\s*"([^"]+)"/)
+    if (m) return m[1]
+  } catch {}
+  return headerPreset || '-'
 }
 
 function collectSessions() {
@@ -89,8 +104,13 @@ for (const s of collectSessions()) {
   const h = info.header
   if (filterParent && h.parentSession !== filterParent) continue
   printed++
+
   const kind = h.origin === 'subagent' ? `subagent(depth ${h.delegationDepth})` : 'main'
-  console.log(`\n=== ${h.id}\n    ${kind}  preset ${h.agentPreset || '-'}`)
+  const created = h.agentPreset || '-'
+  const active = currentPreset(h.id, h.agentPreset)
+  const label = active === created ? active : `${active} (created as ${created})`
+
+  console.log(`\n=== ${h.id}\n    ${kind}  preset ${label}`)
   if (h.parentSession) console.log(`    parent ${h.parentSession}`)
   if (!info.sources.size) {
     console.log('    (无 assistant 消息)')
