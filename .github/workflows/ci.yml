@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: node ${{ matrix.node }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # 没有依赖：install.mjs 只用 node 内置模块
+      - name: unit tests
+        run: node --test
+      - name: installer smoke (dry-run on a throwaway DSH_HOME)
+        shell: bash
+        run: |
+          export DSH_HOME="$(mktemp -d)"
+          mkdir -p "$DSH_HOME/profiles/web"
+          printf -- "- id: ui-theme\n  name: x\n" > "$DSH_HOME/profiles/web/cordis.patch.yml"
+          node install.mjs --profile web --dry-run

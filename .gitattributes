@@ -1,0 +1,7 @@
+# 统一换行：仓库内用 LF，检出到 Windows 也不许把 .mjs 变成 CRLF
+* text=auto eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.md  text eol=lf
+*.yml text eol=lf
+*.json text eol=lf

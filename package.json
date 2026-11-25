@@ -1,0 +1,42 @@
+{
+  "name": "dsh-advisor-preset",
+  "version": "0.1.0",
+  "description": "DSH agent preset that routes sub-agents to a different provider (e.g. your ChatGPT subscription) while the main model orchestrates.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "dsh-advisor-install": "./install.mjs"
+  },
+  "files": [
+    "install.mjs",
+    "preset/",
+    "tools/",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "install-preset": "node install.mjs",
+    "check-model": "node tools/check-subagent-model.cjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek",
+    "agent-preset",
+    "multi-model",
+    "orchestration",
+    "subagent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yingchouchu/dsh-advisor-preset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yingchouchu/dsh-advisor-preset/issues"
+  },
+  "homepage": "https://github.com/yingchouchu/dsh-advisor-preset#readme"
+}
